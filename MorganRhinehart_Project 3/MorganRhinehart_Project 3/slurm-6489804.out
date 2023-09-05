@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "/var/spool/slurmd/job6489804/slurm_script", line 10, in <module>
+    all_lines = open('log.lammps','r').readlines()
+FileNotFoundError: [Errno 2] No such file or directory: 'log.lammps'

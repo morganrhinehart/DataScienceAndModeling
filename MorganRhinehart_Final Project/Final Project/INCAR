@@ -1,0 +1,26 @@
+# Tags for doing general electronic structure optimization
+ALGO = Fast
+EDIFF = 0.0005
+ISMEAR = -5
+NELM = 100
+SIGMA = 0.05
+
+# Tags for general ionic structure optimization
+IBRION = 2
+ISIF = 2
+NSW = 99
+
+# Precision control
+ENCUT = 520
+PREC = Accurate
+
+# Parallelization setup
+LREAL = Auto
+
+# I/O control
+LWAVE = TRUE
+
+# Tags for magnetism and polarization
+ISPIN = 2
+MAGMOM = 4*0.6
+LORBIT = 11

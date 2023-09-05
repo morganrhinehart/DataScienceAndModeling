@@ -1,0 +1,46 @@
+#### set simulation box #####
+units metal ## use metal unit system - see lammps manual
+boundary p p p ## make simulation box periodic along all directions
+atom_style atomic ## default atom style for metals 
+
+## define crystal structure and lattice constant a0
+## define direction vectors, i.e., set x=[200], y=[020], z=[002]
+lattice fcc 3.52 orient x 2 0 0 orient y 0 2 0 orient z 0 0 2
+										
+## region box block 0 24.64 0 24.64 0 24.64 units box ## define box sizes along x, y, z 
+## The above region command can also be achieve by the one below. Think about why? ###
+ region box block 0 5 0 14 0 5
+create_box 1 box ## create the simulation box, allowing a max of 2 species
+create_atoms 1 box ## create type-1 metal atoms in the box
+
+pair_style eam ## set interatomic potential style to be EAM
+pair_coeff * * Ni_u3.eam
+
+neighbor 0.3 bin ## define parameters for neighbor list
+neigh_modify delay 5 ## define parameters for neighbor list
+
+compute c1 all pe/atom ### compute potential energy per atom
+compute c2 all cna/atom 2.005 ### compute CNA per atom
+compute c3 all stress/atom	NULL ### compute stress tensor per atom
+
+thermo 5 ## Output system information every 5 timesteps
+#### Output step No., temperature, potential energy, total energy,
+#### total pressure, pressure component, box volume
+thermo_style custom step temp pe etotal press pxx pyy pzz pxy pxz pyz vol	
+thermo_modify format float %10.3f ## set output format
+timestep 0.005 ## set timestep size
+
+### system equilibrium by NPT ensemble to relax the pressure ###
+dump 1a all custom 200 dump_FCCNi_Perfect_001.atom id type x y z c_c1 c_c2 c_c3[1] c_c3[2] c_c3[3]
+velocity all create 300.0 4928459 mom yes rot yes dist gaussian   ## Assign velocities to all atoms
+#fix  1f all nve  ## define a NVE ensemble for the system
+#define a NPT ensemble for the system
+fix 1f all npt temp 300.0 300.0 0.5 iso 0.0 0.0 5.0
+run  10000	## run the simulation for 10000 steps
+###Write a binary restart file of the current state of the simulation
+write_restart restart.equil_NPT
+undump 1a
+unfix 1f	## NPT run complete
+
+
+

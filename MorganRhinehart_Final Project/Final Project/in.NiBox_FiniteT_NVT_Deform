@@ -1,0 +1,42 @@
+#### set simulation box #####
+units metal                        ## use metal unit system - see lammps manual
+boundary p p p 
+atom_style atomic                  ## default atom style for metals 
+
+read_restart restart.equil_NPT     ## read in restart file
+
+
+mass 1 1.0
+
+pair_style lj/cut 2.5  ## set interatomic potential style to be EAM
+pair_coeff 1 1 7.615119557037 -0.074391647072 2.5 
+
+neighbor 0.3 bin ## define parameters for neighbor list
+neigh_modify delay 5 ## define parameters for neighbor list
+
+compute c1 all pe/atom                              ### compute potential energy per atom
+compute c2 all cna/atom 0.5                       ### compute CNA per atom
+compute c3 all stress/atom	NULL                    ### compute stress tensor per atom
+
+
+
+thermo 5 ## Output system information every 5 timesteps
+#### Output step No., temperature, potential energy, total energy,
+#### total pressure, pressure component, box volume
+thermo_style custom step temp pe etotal press pxx pyy pzz pxy pxz pyz vol	
+thermo_modify format float %10.3f ## set output format
+timestep 0.000005 ## set timestep size
+
+### system deform by NVT+Deform ###
+reset_timestep 0
+dump 1a all custom 200 dump_FCCNi_deform_001.atom id type x y z c_c1 c_c2 c_c3[1] c_c3[2] c_c3[3]
+#Using NVT to control temperature
+fix 1 all nvt temp 600 600 5
+#Using "fix deform" to perform tensile test along y direction
+fix 2 all deform 1 y erate 0.005 remap x
+run  10000	## run the simulation for 10000 steps
+
+###Write a binary restart file of the current state of the simulation
+write_restart restart.deform_NVT
+
+

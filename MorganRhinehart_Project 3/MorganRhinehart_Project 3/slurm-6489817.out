@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "/var/spool/slurmd/job6489817/slurm_script", line 10, in <module>
+    all_lines = open('log_NVT_Deform_100K.lammps','r').readlines()
+FileNotFoundError: [Errno 2] No such file or directory: 'log_NVT_Deform_100K.lammps'
