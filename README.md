@@ -78,3 +78,5 @@ pair_coeff 1 1 a1 a2 2.5
 Then I changed the cna / atom and timestamp value to be smaller to have the NPT and NVT file run to completion without any errors. It took 2 seconds to run completely for both NPT and NVT(deform). 
 
 To graph the convergence from the Lennard Jones potential of Nickel I used the plot_convergence.py file from the last lab using the data from the output file log.lammps from the NVT calculations and got back this figure. 
+[convergence.pdf](https://github.com/user-attachments/files/16662873/convergence.pdf)
+
